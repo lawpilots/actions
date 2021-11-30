@@ -1,0 +1,24 @@
+name: 'Add staging tag'
+description: 'Add staging tag to current commit'
+runs:
+  using: "composite"
+  steps:
+    - name: Delete and re-create staging tag
+      uses: actions/github-script@v3
+      with:
+        script: |
+          try {
+              await github.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "tags/staging"
+              })
+          } catch (e) {
+            console.log("The staging tag doesn't exist yet: " + e)
+          }
+          await github.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/staging",
+            sha: context.sha
+          })
