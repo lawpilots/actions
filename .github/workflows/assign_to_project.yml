@@ -5,6 +5,11 @@ on:
     secrets:
       MY_GITHUB_TOKEN:
         required: true
+    inputs:
+      GH_PROJECT_URL:
+        description: 'The URL of the GitHub project'
+        required: true
+        type: string
 
 jobs:
   assign_to_project:
@@ -14,7 +19,7 @@ jobs:
       - name: Assign new issues and new pull requests to project
         uses: srggrs/assign-one-project-github-action@1.2.1
         with:
-          project: 'https://github.com/orgs/lawpilots/projects/3'
+          project: ${{ inputs.GH_PROJECT_URL }}
           column_name: 'To do'
         env:
           MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}

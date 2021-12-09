@@ -11,3 +11,5 @@ jobs:
     uses: lawpilots/actions/.github/workflows/assign_to_project.yml@main
     secrets:
       MY_GITHUB_TOKEN: ${{ secrets.ORGA_GITHUB_TOKEN }}
+    with:
+      GH_PROJECT_URL: https://github.com/orgs/lawpilots/projects/3
