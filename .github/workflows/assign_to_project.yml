@@ -11,6 +11,9 @@ on:
         required: true
         type: string
 
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
 jobs:
   assign_to_project:
     runs-on: ubuntu-latest
@@ -21,5 +24,3 @@ jobs:
         with:
           project: ${{ inputs.GH_PROJECT_URL }}
           column_name: 'To do'
-        env:
-          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
