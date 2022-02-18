@@ -22,5 +22,6 @@ jobs:
       - name: Assign new issues and new pull requests to project
         uses: srggrs/assign-one-project-github-action@1.2.1
         with:
-          project: ${{ inputs.GH_PROJECT_URL }}
+          # project: ${{ inputs.GH_PROJECT_URL }}
+          project: https://github.com/orgs/lawpilots/projects/3
           column_name: 'To do'
