@@ -14,13 +14,13 @@ on:
 env:
   MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-jobs:
-  assign_to_project:
-    runs-on: ubuntu-latest
-    name: Assign to the one and only Project
-    steps:
-      - name: Assign new issues and new pull requests to project
-        uses: srggrs/assign-one-project-github-action@1.2.1
-        with:
-          project: ${{ inputs.GH_PROJECT_URL }}
-          column_name: 'To do'
+# jobs:
+#   assign_to_project:
+#     runs-on: ubuntu-latest
+#     name: Assign to the one and only Project
+#     steps:
+#       - name: Assign new issues and new pull requests to project
+#         uses: srggrs/assign-one-project-github-action@1.2.1
+#         with:
+#           project: ${{ inputs.GH_PROJECT_URL }}
+#           column_name: 'To do'
