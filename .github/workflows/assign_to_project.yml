@@ -2,9 +2,9 @@ name: Assign current PRs or Issue to Github Project
 
 on:
   workflow_call:
-    secrets:
-      MY_GITHUB_TOKEN:
-        required: true
+    # secrets:
+    #   MY_GITHUB_TOKEN:
+    #     required: true
     inputs:
       GH_PROJECT_URL:
         description: 'The URL of the GitHub project'
