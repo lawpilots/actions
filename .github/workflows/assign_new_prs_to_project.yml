@@ -3,7 +3,7 @@ name: Auto-assign PRs and Issues to Github Project
 on:
   issues:
     types: [opened, reopened]
-  pull_request:
+  pull_request_target:
     types: [opened, reopened]
 
 jobs:
