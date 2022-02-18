@@ -2,9 +2,9 @@ name: Assign current PRs or Issue to Github Project
 
 on:
   workflow_call:
-    # secrets:
-    #   MY_GITHUB_TOKEN:
-    #     required: true
+    secrets:
+      MY_GITHUB_TOKEN:
+        required: true
     inputs:
       GH_PROJECT_URL:
         description: 'The URL of the GitHub project'
@@ -12,7 +12,7 @@ on:
         type: string
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 jobs:
   assign_to_project:
@@ -22,6 +22,5 @@ jobs:
       - name: Assign new issues and new pull requests to project
         uses: srggrs/assign-one-project-github-action@1.2.1
         with:
-          # project: ${{ inputs.GH_PROJECT_URL }}
-          project: https://github.com/orgs/lawpilots/projects/3
+          project: ${{ inputs.GH_PROJECT_URL }}
           column_name: 'To do'
