@@ -10,4 +10,4 @@ jobs:
   assign_to_project:
     uses: lawpilots/actions/.github/workflows/assign_to_project.yml@main
     with:
-      GH_PROJECT_URL: https://github.com/orgs/lawpilots/projects/3
+      project: https://github.com/orgs/lawpilots/projects/3
