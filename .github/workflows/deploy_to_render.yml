@@ -1,0 +1,43 @@
+name: Deploy service on render
+
+on:
+  workflow_call:
+    inputs:
+      RENDER_API_TOKEN:
+        description: "API token of a user that has access to the Lawpilots organization in render"
+        required: true
+        type: string
+      RENDER_SERVICE_NAME:
+        description: "Name of the render service to deploy to (see dashboard.render.com)"
+        required: true
+        type: string
+
+jobs:
+  checks-and-test:
+    runs-on: ubuntu-latest
+    name: code checks and run tests
+    steps:
+      - name: Deploy and wait until the deployment is done
+        run: |
+          export RENDER_API_TOKEN=${{ inputs.RENDER_API_TOKEN }}
+          export RENDER_SERVICE_NAME=${{ inputs.RENDER_SERVICE_NAME }}
+          export RENDER_SERVICE_ID=$(curl -s --request GET --url "https://api.render.com/v1/services?name=$RENDER_SERVICE_NAME" --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN" | jq -r '.[0].service.id')
+          echo "SERVICE ID $RENDER_SERVICE_ID"
+          export RENDER_DEPLOY_ID=$(curl -s --request POST --url https://api.render.com/v1/services/"$RENDER_SERVICE_ID"/deploys  --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN"  --header 'Content-Type: application/json'  | jq -r '.id')
+          echo "DEPLOY ID $RENDER_DEPLOY_ID"
+
+          # Render status option:
+          # - created build_in_progress update_in_progress --> wait until the status changed
+          # - live  --> deployment was successful
+          # - deactivated build_failed update_failed canceled --> deployment failed
+          while true; do
+              export RENDER_DEPLOY_STATUS=$(curl -s --request GET --url https://api.render.com/v1/services/"$RENDER_SERVICE_ID"/deploys/"$RENDER_DEPLOY_ID" --header 'Accept: application/json' --header "Authorization: Bearer $RENDER_API_TOKEN" | jq -r '.status')
+              echo "STATUS $RENDER_DEPLOY_STATUS"
+              if [ "$RENDER_DEPLOY_STATUS" = "live" ]; then
+                exit 0
+              fi
+              if [ "$RENDER_DEPLOY_STATUS" = "deactivated" ] || [ "$RENDER_DEPLOY_STATUS" = "build_failed" ] || [ "$RENDER_DEPLOY_STATUS" = "update_failed" ] || [ "$RENDER_DEPLOY_STATUS" = "canceled" ]  ; then
+                exit 1
+              fi
+              sleep 30
+          done
