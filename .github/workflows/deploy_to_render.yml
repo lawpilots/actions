@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Deploy and wait until the deployment is done
         run: |
-          export RENDER_API_TOKEN=${{ inputs.RENDER_API_TOKEN }}
+          export RENDER_API_TOKEN=${{ secrets.RENDER_API_TOKEN }}
           export RENDER_SERVICE_NAME=${{ inputs.RENDER_SERVICE_NAME }}
           SERVICE_DATA=$(curl -s --request GET --url "https://api.render.com/v1/services?name=$RENDER_SERVICE_NAME" --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN")
           RENDER_SERVICE_ID=$(echo "$SERVICE_DATA" | jq -r '.[0] | .service.id')
