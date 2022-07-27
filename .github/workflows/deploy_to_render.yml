@@ -11,8 +11,6 @@ on:
       RENDER_API_TOKEN:
         description: "API token of a user that has access to the Lawpilots organization in render"
         required: true
-        type: string
-
 
 jobs:
   checks-and-test:
