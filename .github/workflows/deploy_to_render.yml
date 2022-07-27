@@ -19,10 +19,21 @@ jobs:
     steps:
       - name: Deploy and wait until the deployment is done
         run: |
-          export RENDER_API_TOKEN=${{ inputs.RENDER_API_TOKEN }}
+          export RENDER_API_TOKEN=${{ secrets.RENDER_API_TOKEN }}
           export RENDER_SERVICE_NAME=${{ inputs.RENDER_SERVICE_NAME }}
-          export RENDER_SERVICE_ID=$(curl -s --request GET --url "https://api.render.com/v1/services?name=$RENDER_SERVICE_NAME" --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN" | jq -r '.[0].service.id')
+          SERVICE_DATA=$(curl -s --request GET --url "https://api.render.com/v1/services?name=$RENDER_SERVICE_NAME" --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN")
+          RENDER_SERVICE_ID=$(echo "$SERVICE_DATA" | jq -r '.[0] | .service.id')
+
+          STATUS=$?
+
+          if [ $STATUS -ne 0 ]; then
+            echo "Could not get service ID from render response. Response was: $SERVICE_DATA"
+            exit $STATUS
+          fi
+
+          export RENDER_SERVICE_ID
           echo "SERVICE ID $RENDER_SERVICE_ID"
+
           export RENDER_DEPLOY_ID=$(curl -s --request POST --url https://api.render.com/v1/services/"$RENDER_SERVICE_ID"/deploys  --header 'Accept: application/json'  --header "Authorization: Bearer $RENDER_API_TOKEN"  --header 'Content-Type: application/json'  | jq -r '.id')
           echo "DEPLOY ID $RENDER_DEPLOY_ID"
 
@@ -31,7 +42,8 @@ jobs:
           # - live  --> deployment was successful
           # - deactivated build_failed update_failed canceled --> deployment failed
           while true; do
-              export RENDER_DEPLOY_STATUS=$(curl -s --request GET --url https://api.render.com/v1/services/"$RENDER_SERVICE_ID"/deploys/"$RENDER_DEPLOY_ID" --header 'Accept: application/json' --header "Authorization: Bearer $RENDER_API_TOKEN" | jq -r '.status')
+              export RENDER_DEPLOY_STATUS
+              RENDER_DEPLOY_STATUS=$(curl -s --request GET --url https://api.render.com/v1/services/"$RENDER_SERVICE_ID"/deploys/"$RENDER_DEPLOY_ID" --header 'Accept: application/json' --header "Authorization: Bearer $RENDER_API_TOKEN" | jq -r '.status')
               echo "STATUS $RENDER_DEPLOY_STATUS"
               if [ "$RENDER_DEPLOY_STATUS" = "live" ]; then
                 exit 0
