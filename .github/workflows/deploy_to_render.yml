@@ -3,14 +3,16 @@ name: Deploy service on render
 on:
   workflow_call:
     inputs:
-      RENDER_API_TOKEN:
-        description: "API token of a user that has access to the Lawpilots organization in render"
-        required: true
-        type: string
       RENDER_SERVICE_NAME:
         description: "Name of the render service to deploy to (see dashboard.render.com)"
         required: true
         type: string
+    secrets:
+      RENDER_API_TOKEN:
+        description: "API token of a user that has access to the Lawpilots organization in render"
+        required: true
+        type: string
+
 
 jobs:
   checks-and-test:
